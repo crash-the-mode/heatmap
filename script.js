@@ -77,7 +77,7 @@ async function drawHeatMap() {
 //	console.log(d3.extent(mVar, varAccessor));
 	const colorScale = d3.scaleThreshold()
 		.domain([-5, -3, -1, 1, 3, 5])
-		.range(["#f7f7f7","#d1e5f0","#67a9cf","#2166ac", "#b2182b","#ef8a62","#fddbc7"]);
+		.range(["#2166ac", "#67a9cf", "#d1e5f0", "#f7f7f7", "#fddbc7", "#ef8a62", "#b2182b"]);
 
 	// 5. Draw data
 	
