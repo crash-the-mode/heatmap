@@ -19,7 +19,7 @@ async function drawHeatMap() {
 	
 	// 2. Create dimensions
 	
-	const width = 1500;
+	const width = 1800;
 	const height = 900;
 
 	let dimensions = {
@@ -28,8 +28,8 @@ async function drawHeatMap() {
 		margin: {
 			top: 100,
 			bottom: 100,
-			left: 50,
-			right: 25,
+			left: 80,
+			right: 10,
 		},
 	};
 
@@ -58,7 +58,8 @@ async function drawHeatMap() {
 	const xScale = d3.scaleBand()
 		.domain([...xdomain])
 		.range([0, dimensions.boundedWidth])
-		.paddingInner(0);
+		.paddingInner(0)
+		.paddingOuter(0);
 
 	const ymm = d3.extent(mVar, yAccessor);
 //	console.log(ymm);
@@ -94,12 +95,28 @@ async function drawHeatMap() {
 
 	// 6. Draw peripherals
 	
+	const xticks = [];
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	for( let i = 0; i < xdomain.length; i++ )
+	{
+		if(xdomain[i] % 5 == 0)
+			xticks.push(xdomain[i]);
+	}
 	const xAxisGenerator = d3.axisBottom()
-		.scale(xScale);
+		.scale(xScale)
+		.tickSize(10)
+		.tickValues([...xticks]);
 
 	const xAxis = graph.append("g")
 		.call(xAxisGenerator)
 		.style("transform", `translateY(${dimensions.boundedHeight}px)`);
+
+	const yAxisGenerator = d3.axisLeft()
+		.scale(yScale)
+		.tickFormat(i => months[i - 1]);
+
+	const yAxis = graph.append("g")
+		.call(yAxisGenerator);
 
 }
 
