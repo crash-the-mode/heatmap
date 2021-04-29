@@ -74,10 +74,10 @@ async function drawHeatMap() {
 		.range([0, dimensions.boundedHeight])
 		.paddingInner(0);
 
-//	console.log(d3.extent(mVar, varAccessor));
+	console.log(d3.extent(mVar, varAccessor));
 	const colorScale = d3.scaleThreshold()
-		.domain([-5.0, -3.0, -1.0, 1.0, 3.0, 5.0])
-		.range(["#2166ac", "#67a9cf", "#d1e5f0", "#f7f7f7", "#fddbc7", "#ef8a62", "#b2182b"]);
+		.domain([-6.0, -4.8, -3.6, -2.4, -1.2, 0, 1.2, 2.4, 3.6, 4.8])
+		.range(["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"]);
 
 	// 5. Draw data
 	
@@ -135,20 +135,23 @@ async function drawHeatMap() {
 		.style("text-anchor", "middle")
 		.style("font-size", "1.75em");
 
+	const legendWidth = 440;
+	const legendBox = legendWidth / colorScale.range().length;
+	
 	const legendGroup = canvas.append("g")
-		.style("transform", `translate(100px, 10px)`);
+		.style("transform", `translate(100px, ${legendBox / 2}px)`);
 
 	const legendScale = d3.scaleLinear()
 		.domain([1, colorScale.range().length - 1])
-		.rangeRound([50, 300]);
+		.rangeRound([legendBox, legendWidth - legendBox]);
 
 	legendGroup.selectAll("rect")
 		.data(colorScale.range())
 		.enter()
 		.append("rect")
-		.attr("height", 50)
+		.attr("height", legendBox)
 		.attr("x", (d, i) => legendScale(i))
-		.attr("width", 50)
+		.attr("width", legendBox)
 		.attr("fill", d => d);
 
 	const legendAxisGen = d3.axisBottom()
@@ -159,7 +162,7 @@ async function drawHeatMap() {
 
 	const legendAxis = legendGroup.append("g")
 		.call(legendAxisGen)
-		.style("transform", `translateY(50px)`);
+		.style("transform", `translateY(${legendBox - 1}px)`);
 
 	const title = canvas.append("text")
 		.attr("x", dimensions.width / 2)
@@ -173,8 +176,10 @@ async function drawHeatMap() {
 		.attr("y", 65)
 		.style("text-anchor", "middle")
 		.html("1753-2015: base temperature 8.66&deg;C")
-		.style("font-size", "1.5em")
+		.style("font-size", "1.5em");
 
+	// 7. Set up interactions
+	
 
 }
 
