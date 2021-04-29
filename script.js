@@ -31,7 +31,7 @@ async function drawHeatMap() {
 		height: height,
 		margin: {
 			top: 100,
-			bottom: 100,
+			bottom: 50,
 			left: 100,
 			right: 10,
 		},
@@ -127,7 +127,7 @@ async function drawHeatMap() {
 
 	const xAxisLabel = xAxis.append("text")
 		.attr("x", dimensions.boundedWidth / 2)
-		.attr("y", dimensions.margin.bottom - 45)
+		.attr("y", dimensions.margin.bottom)
 		.attr("fill", "black")
 		.text("Year")
 		.style("font-size", "1.75em")
