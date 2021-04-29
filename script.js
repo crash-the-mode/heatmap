@@ -28,7 +28,7 @@ async function drawHeatMap() {
 		margin: {
 			top: 100,
 			bottom: 100,
-			left: 80,
+			left: 100,
 			right: 10,
 		},
 	};
@@ -76,7 +76,7 @@ async function drawHeatMap() {
 
 //	console.log(d3.extent(mVar, varAccessor));
 	const colorScale = d3.scaleThreshold()
-		.domain([-5, -3, -1, 1, 3, 5])
+		.domain([-5.0, -3.0, -1.0, 1.0, 3.0, 5.0])
 		.range(["#2166ac", "#67a9cf", "#d1e5f0", "#f7f7f7", "#fddbc7", "#ef8a62", "#b2182b"]);
 
 	// 5. Draw data
@@ -111,12 +111,70 @@ async function drawHeatMap() {
 		.call(xAxisGenerator)
 		.style("transform", `translateY(${dimensions.boundedHeight}px)`);
 
+	const xAxisLabel = xAxis.append("text")
+		.attr("x", dimensions.boundedWidth / 2)
+		.attr("y", dimensions.margin.bottom - 45)
+		.attr("fill", "black")
+		.text("Year")
+		.style("font-size", "1.75em")
+
 	const yAxisGenerator = d3.axisLeft()
 		.scale(yScale)
-		.tickFormat(i => months[i - 1]);
+		.tickFormat(i => months[i - 1])
+		.tickSize(10);
 
 	const yAxis = graph.append("g")
 		.call(yAxisGenerator);
+
+	const yAxisLabel = yAxis.append("text")
+		.attr("x", -dimensions.boundedHeight / 2)
+		.attr("y", -dimensions.margin.left + 40)
+		.attr("fill", "black")
+		.text("Months")
+		.style("transform", "rotate(-90deg)")
+		.style("text-anchor", "middle")
+		.style("font-size", "1.75em");
+
+	const legendGroup = canvas.append("g")
+		.style("transform", `translate(100px, 10px)`);
+
+	const legendScale = d3.scaleLinear()
+		.domain([1, colorScale.range().length - 1])
+		.rangeRound([50, 300]);
+
+	legendGroup.selectAll("rect")
+		.data(colorScale.range())
+		.enter()
+		.append("rect")
+		.attr("height", 50)
+		.attr("x", (d, i) => legendScale(i))
+		.attr("width", 50)
+		.attr("fill", d => d);
+
+	const legendAxisGen = d3.axisBottom()
+		.scale(legendScale)
+		.tickValues(d3.range(1, colorScale.range().length))
+		.tickFormat(i => colorScale.domain()[i - 1])
+		.tickSize(13);
+
+	const legendAxis = legendGroup.append("g")
+		.call(legendAxisGen)
+		.style("transform", `translateY(50px)`);
+
+	const title = canvas.append("text")
+		.attr("x", dimensions.width / 2)
+		.attr("y", 40)
+		.style("text-anchor", "middle")
+		.text("Monthly Global Land-Surface Temperature Deviation")
+		.style("font-size", "2em");
+
+	const desc = canvas.append("text")
+		.attr("x", dimensions.width / 2)
+		.attr("y", 65)
+		.style("text-anchor", "middle")
+		.html("1753-2015: base temperature 8.66&deg;C")
+		.style("font-size", "1.5em")
+
 
 }
 
