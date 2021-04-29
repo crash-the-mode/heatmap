@@ -24,7 +24,7 @@ async function drawHeatMap() {
 	// 2. Create dimensions
 	
 	const width = 1600;
-	const height = 900;
+	const height = 800;
 
 	let dimensions = {
 		width: width,
