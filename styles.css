@@ -8,13 +8,19 @@ body {
 }
 main {
 	position: relative;
+	margin-top: 1rem;
 }
 #tooltip {
 	position: absolute;
 	pointer-events: none;
 	opacity: 0;
 	z-index: 999;
-
+	background-color: #222;
+	color: #eee;
+	border-radius: 12px;
+	text-align: center;
+	font-size: 1.25em;
+	padding: 1rem;
 }
 text {
 	font-size: 1.25em;
