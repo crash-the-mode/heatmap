@@ -23,7 +23,7 @@ async function drawHeatMap() {
 
 	// 2. Create dimensions
 	
-	const width = 1800;
+	const width = 1600;
 	const height = 900;
 
 	let dimensions = {
@@ -113,7 +113,7 @@ async function drawHeatMap() {
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 	for( let i = 0; i < xdomain.length; i++ )
 	{
-		if(xdomain[i] % 5 == 0)
+		if(xdomain[i] % 10 == 0)
 			xticks.push(xdomain[i]);
 	}
 	const xAxisGenerator = d3.axisBottom()
@@ -151,7 +151,7 @@ async function drawHeatMap() {
 		.style("text-anchor", "middle")
 		.style("font-size", "1.75em");
 
-	const legendWidth = 440;
+	const legendWidth = 330;
 	const legendBox = legendWidth / colorScale.range().length;
 	
 	const legendGroup = canvas.append("g")
@@ -205,6 +205,9 @@ async function drawHeatMap() {
 	const tooltip = d3.select("#tooltip");
 	function onMouseEnter(e, datum) {
 //		console.log(e);
+//		console.log(datum);
+		const x = xScale(xAccessor(datum)) + dimensions.margin.left;
+		const y = yScale(yAccessor(datum) - 1) + dimensions.margin.top;
 		tooltip.style("opacity", 1);
 		tooltip.select("#year-month")
 			.text(`${xAccessor(datum)} - ${monthFormater(monthParser(yAccessor(datum)))}`);
@@ -212,6 +215,8 @@ async function drawHeatMap() {
 			.html(`${d3.format(".1f")(tempAccessor(datum))}&deg;C`);
 		tooltip.select("#variance")
 			.html(`${d3.format(".1f")(varAccessor(datum))}&deg;C`);
+		tooltip.style("transform", `translate(calc(-50% + ${x}px), calc(-100% + ${y}px))`);
+		tooltip.attr("data-year", xAccessor(datum));
 	}
 	function onMouseLeave(e, datum) {
 		tooltip.style("opacity", 0)
