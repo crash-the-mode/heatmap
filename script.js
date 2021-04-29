@@ -16,7 +16,11 @@ async function drawHeatMap() {
 //	console.log(yAccessor(mVar[200]), typeof yAccessor(mVar[200]));
 	
 	const varAccessor = d => d.variance;
-	
+	const tempAccessor = d => d.temperature;
+
+	const monthFormater = d3.timeFormat("%B");
+	const monthParser = d3.timeParse("%m");
+
 	// 2. Create dimensions
 	
 	const width = 1800;
@@ -81,6 +85,11 @@ async function drawHeatMap() {
 
 	// 5. Draw data
 	
+	for( let i = 0; i < mVar.length; i++ )
+	{
+		mVar[i].temperature = Number((baseTemp + varAccessor(mVar[i])).toFixed(3));
+	}
+	
 	const barWidth = dimensions.boundedWidth / xdomain.length;
 	const barHeight = dimensions.boundedHeight / ydomain.length;
 	graph.selectAll("rect")
@@ -92,6 +101,10 @@ async function drawHeatMap() {
 		.attr("height", barHeight)
 		.attr("width", barWidth)
 		.attr("fill", d => colorScale(varAccessor(d)))
+		.attr("class", "cell")
+		.attr("data-year", d => xAccessor(d))
+		.attr("data-month", d => monthFormater(monthParser(yAccessor(d))))
+		.attr("data-temp", d => tempAccessor(d));
 
 	// 6. Draw peripherals
 	
@@ -179,7 +192,24 @@ async function drawHeatMap() {
 		.style("font-size", "1.5em");
 
 	// 7. Set up interactions
-	
+	graph.selectAll("rect")
+		.on("mouseenter", onMouseEnter)
+		.on("mouseleave", onMouseLeave);
+
+	const tooltip = d3.select("#tooltip");
+	function onMouseEnter(e, datum) {
+		console.log(e);
+		tooltip.style("opacity", 1);
+		tooltip.select("#year-month")
+			.text(`${xAccessor(datum)} - ${monthFormater(monthParser(yAccessor(datum)))}`);
+		tooltip.select("#temp")
+			.html(`${d3.format(".1f")(tempAccessor(datum))}&deg;C`);
+		tooltip.select("#variance")
+			.html(`${d3.format(".1f")(varAccessor(datum))}&deg;C`);
+	}
+	function onMouseLeave(e, datum) {
+		tooltip.style("opacity", 0)
+	}
 
 }
 
