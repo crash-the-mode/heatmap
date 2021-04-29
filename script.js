@@ -3,7 +3,7 @@ async function drawHeatMap() {
 	// 1. Access data
 	
 	const dataset = await d3.json("https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json");
-	console.log(dataset);
+//	console.log(dataset);
 
 	const mVar = dataset.monthlyVariance;
 //	console.log(mVar);
@@ -58,7 +58,7 @@ async function drawHeatMap() {
 	{
 		xdomain.push(i);
 	}
-	console.log(xdomain);
+//	console.log(xdomain);
 	const xScale = d3.scaleBand()
 		.domain([...xdomain])
 		.range([0, dimensions.boundedWidth])
@@ -78,11 +78,10 @@ async function drawHeatMap() {
 		.range([0, dimensions.boundedHeight])
 		.paddingInner(0);
 
-	console.log(d3.extent(mVar, varAccessor));
+//	console.log(d3.extent(mVar, varAccessor));
 	const colorScale = d3.scaleThreshold()
 		.domain([-6.0, -4.8, -3.6, -2.4, -1.2, 0, 1.2, 2.4, 3.6, 4.8])
-		.range(["#313695", "#4575b4", "#74add1", "#abd9e9", "#e0f3f8", "#ffffbf", "#fee090", "#fdae61", "#f46d43", "#d73027", "#a50026"]);
-
+		.range(["#08519c", "#3182bd", "#6baed6", "#9ecae1", "#c6dbef", "#eff3ff", "#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000"]);
 	// 5. Draw data
 	
 	for( let i = 0; i < mVar.length; i++ )
