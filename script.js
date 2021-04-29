@@ -70,7 +70,7 @@ async function drawHeatMap() {
 	const ydomain = [];
 	for( let i = ymm[0]; i <= ymm[1]; i++ )
 	{
-		ydomain.push(i);
+		ydomain.push(i - 1);
 	}
 	
 	const yScale = d3.scaleBand()
@@ -97,13 +97,14 @@ async function drawHeatMap() {
 		.enter()
 		.append("rect")
 		.attr("x", d => xScale(xAccessor(d)))
-		.attr("y", d => yScale(yAccessor(d)))
+		.attr("y", d => yScale(yAccessor(d) - 1))
 		.attr("height", barHeight)
 		.attr("width", barWidth)
 		.attr("fill", d => colorScale(varAccessor(d)))
 		.attr("class", "cell")
 		.attr("data-year", d => xAccessor(d))
-		.attr("data-month", d => monthFormater(monthParser(yAccessor(d))))
+//		.attr("data-month", d => monthFormater(monthParser(yAccessor(d))))
+		.attr("data-month", d => yAccessor(d) - 1)
 		.attr("data-temp", d => tempAccessor(d));
 
 	// 6. Draw peripherals
@@ -121,6 +122,7 @@ async function drawHeatMap() {
 		.tickValues([...xticks]);
 
 	const xAxis = graph.append("g")
+		.attr("id", "x-axis")
 		.call(xAxisGenerator)
 		.style("transform", `translateY(${dimensions.boundedHeight}px)`);
 
@@ -133,10 +135,11 @@ async function drawHeatMap() {
 
 	const yAxisGenerator = d3.axisLeft()
 		.scale(yScale)
-		.tickFormat(i => months[i - 1])
+		.tickFormat(i => months[i])
 		.tickSize(10);
 
 	const yAxis = graph.append("g")
+		.attr("id", "y-axis")
 		.call(yAxisGenerator);
 
 	const yAxisLabel = yAxis.append("text")
@@ -152,7 +155,8 @@ async function drawHeatMap() {
 	const legendBox = legendWidth / colorScale.range().length;
 	
 	const legendGroup = canvas.append("g")
-		.style("transform", `translate(100px, ${legendBox / 2}px)`);
+		.style("transform", `translate(100px, ${legendBox / 2}px)`)
+		.attr("id", "legend");
 
 	const legendScale = d3.scaleLinear()
 		.domain([1, colorScale.range().length - 1])
@@ -182,14 +186,16 @@ async function drawHeatMap() {
 		.attr("y", 40)
 		.style("text-anchor", "middle")
 		.text("Monthly Global Land-Surface Temperature Deviation")
-		.style("font-size", "2em");
+		.style("font-size", "2em")
+		.attr("id", "title");
 
 	const desc = canvas.append("text")
 		.attr("x", dimensions.width / 2)
 		.attr("y", 65)
 		.style("text-anchor", "middle")
 		.html("1753-2015: base temperature 8.66&deg;C")
-		.style("font-size", "1.5em");
+		.style("font-size", "1.5em")
+		.attr("id", "description");
 
 	// 7. Set up interactions
 	graph.selectAll("rect")
@@ -198,7 +204,7 @@ async function drawHeatMap() {
 
 	const tooltip = d3.select("#tooltip");
 	function onMouseEnter(e, datum) {
-		console.log(e);
+//		console.log(e);
 		tooltip.style("opacity", 1);
 		tooltip.select("#year-month")
 			.text(`${xAccessor(datum)} - ${monthFormater(monthParser(yAccessor(datum)))}`);
